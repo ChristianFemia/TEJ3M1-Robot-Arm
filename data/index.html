@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <!---- import bootstrap-->
     <script src="jquery-3.3.1.min.js"></script>
     <script src="bootstrap.bundle.min.js"></script>
@@ -22,20 +23,70 @@
         <input type="range" class="form-range" min="0" max="255" id="base">
         <label for="arm" class="form-label" id="arm-value">Arm</label>
         <input type="range" class="form-range" min="0" max="255" id="arm">
-        <label for="gripper" class="form-label" id="gripper-value">gripper</label>
+        <label for="gripper" class="form-label" id="gripper-value">Gripper</label>
         <input type="range" class="form-range" min="0" max="255" id="gripper">
 
 
         <script>
             $(document).ready(function () {
-                $("#base").change(function () {
+                var url = "ws://192.168.4.1:1337/";
+                var armValue =0;
+                var baseValue = 0;
+                var gripperValue = 0;
+                function init() {
+                    // Connect to WebSocket server
+                    wsConnect(url);
+                }
+
+                // Call this to connect to the WebSocket server
+                function wsConnect(url) {
+
+                    // Connect to WebSocket server
+                    websocket = new WebSocket(url);
+
+                    // Assign callbacks
+                    websocket.onopen = function (evt) { onOpen(evt) };
+                    websocket.onclose = function (evt) { onClose(evt) };
+                    websocket.onmessage = function (evt) { onMessage(evt) };
+                    websocket.onerror = function (evt) { onError(evt) };
+                }
+
+                // Called when a WebSocket connection is established with the server
+                function onOpen(evt) {
+
+                    // Log connection state
+                    console.log("Connected");
+                    doSend("a:"+armValue+"b:"+baseValue+"g:"+gripperValue);
+                }
+
+                // Called when the WebSocket connection is closed
+                function onClose(evt) {
+
+                    // Log disconnection state
+                    console.log("Disconnected");
+
+                    // Try to reconnect after a few seconds
+                    setTimeout(function () { wsConnect(url) }, 2000);
+                }
+                function doSend(message) {
+                    console.log("Sending: " + message);
+                    websocket.send(message);
+                }
+
+                $("#base").on("input change", function () {
+                    baseValue = $(this).val();
                     $("#base-value").text("Base: " + $(this).val());
+                    doSend(armValue+":"+baseValue+":"+gripperValue);
                 });
-                $("#arm").change(function () {
-                    $("#arm-value").text($(this).val());
+                $("#arm").on("input change",function () {
+                    armValue = $(this).val();
+                    $("#arm-value").text("Arm: " + $(this).val());
+                    doSend("a:"+armValue+"b:"+baseValue+"g:"+gripperValue);
                 });
-                $("#gripper").change(function () {
-                    $("#gripper-value").text($(this).val());
+                $("#gripper").on("input change",function () {
+                    gripperValue = $(this).val();
+                    $("#gripper-value").text("Gripper: " + $(this).val());
+                    doSend("a:"+armValue+"b:"+baseValue+"g:"+gripperValue);
                 });
             });
         </script>
