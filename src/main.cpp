@@ -11,6 +11,10 @@ WebSocketsServer webSocket = WebSocketsServer(1337);
 Servo arm;
 Servo gripper;
 Servo base;
+char* in;
+char* armValue;
+char* gripperValue;
+char* baseValue;
 
 void onWebSocketEvent(uint8_t client_num,
                       WStype_t type,
@@ -40,6 +44,21 @@ void onWebSocketEvent(uint8_t client_num,
 
     // Print out raw message
     Serial.printf("[%u] Received text: %s\n", client_num, payload);
+    in = (char*)payload;
+    armValue = strtok(in, "a:");
+    baseValue = strtok(NULL, "b:");
+    gripperValue = strtok(NULL, "g:");
+
+    Serial.print("Arm Value: ");
+    Serial.println(atoi(armValue));
+    Serial.print("Gripper Value: ");
+    Serial.println(atoi(gripperValue));
+    Serial.print("Base Value: ");
+    Serial.println(atoi(baseValue));
+
+    arm.write(atoi(armValue));
+    gripper.write(atoi(gripperValue));
+    base.write(atoi(baseValue));
 
 
 

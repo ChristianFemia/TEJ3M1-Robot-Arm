@@ -28,16 +28,17 @@
 
 
         <script>
-            $(document).ready(function () {
                 var url = "ws://192.168.4.1:1337/";
-                var armValue =0;
+                var armValue = 0;
                 var baseValue = 0;
                 var gripperValue = 0;
+                var websocket;
                 function init() {
                     // Connect to WebSocket server
                     wsConnect(url);
                 }
-
+                // Call the init function as soon as the page loads
+                window.addEventListener("load", init, false);
                 // Call this to connect to the WebSocket server
                 function wsConnect(url) {
 
@@ -56,7 +57,7 @@
 
                     // Log connection state
                     console.log("Connected");
-                    doSend("a:"+armValue+"b:"+baseValue+"g:"+gripperValue);
+                    //doSend("a:"+armValue+"b:"+baseValue+"g:"+gripperValue);
                 }
 
                 // Called when the WebSocket connection is closed
@@ -73,24 +74,25 @@
                     websocket.send(message);
                 }
 
-                $("#base").on("input change", function () {
-                    baseValue = $(this).val();
-                    $("#base-value").text("Base: " + $(this).val());
-                    doSend(armValue+":"+baseValue+":"+gripperValue);
+                document.getElementById("base").addEventListener("input", function() {
+                    baseValue = document.getElementById("base").value;
+                    document.getElementById("base-value").innerHTML = "Base: " + document.getElementById("base").value;
+                    doSend("a:" + armValue + "b:" + baseValue + "g:" + gripperValue);
                 });
-                $("#arm").on("input change",function () {
-                    armValue = $(this).val();
-                    $("#arm-value").text("Arm: " + $(this).val());
-                    doSend("a:"+armValue+"b:"+baseValue+"g:"+gripperValue);
+                document.getElementById("arm").addEventListener("input", function() {
+                    armValue = document.getElementById("arm").value;
+                    document.getElementById("arm-value").innerHTML = "Arm: " + document.getElementById("arm").value;
+                    doSend("a:" + armValue + "b:" + baseValue + "g:" + gripperValue);
                 });
-                $("#gripper").on("input change",function () {
-                    gripperValue = $(this).val();
-                    $("#gripper-value").text("Gripper: " + $(this).val());
-                    doSend("a:"+armValue+"b:"+baseValue+"g:"+gripperValue);
+
+                document.getElementById("gripper").addEventListener("input", function() {
+                    gripperValue = document.getElementById("gripper").value;
+                    document.getElementById("gripper-value").innerHTML = "Gripper: " + document.getElementById("gripper").value;
+                    doSend("a:" + armValue + "b:" + baseValue + "g:" + gripperValue);
                 });
-            });
+
+                
+                // Call the init function as soon as the page loads
+                window.addEventListener("load", init, false);
         </script>
-
-
-
 </html>

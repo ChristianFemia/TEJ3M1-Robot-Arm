@@ -16,8 +16,5 @@ const int gripperPin = 16;
 void onIndexRequest(AsyncWebServerRequest *request);
 void onCSSRequest(AsyncWebServerRequest *request);
 void onJSRequest(AsyncWebServerRequest *request);
-void arcadeDrive(double xSpeed, double zRotation);
-void leftMotor(int motorSpeed);
-void rightMotor(int motorSpeed);
 
 #endif  // ROBOTARM_H
